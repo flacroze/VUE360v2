@@ -16,9 +16,9 @@ type AgentSkillsProps = {
 
 // Configuration des niveaux
 const SKILL_LEVELS = {
-  0: { label: 'Aucun', color: 'bg-gray-400 text-grey border-gray-300' },
+  0: { label: 'Aucun', color: 'bg-gray-400 text-white border-gray-300' },
   1: { label: 'En cours', color: 'bg-yellow-400 text-yellow border-yellow-300' },
-  2: { label: 'Acquis', color: 'bg-blue-400 text-blue border-green-300' },
+  2: { label: 'Acquis', color: 'bg-blue-400 text-white border-green-300' },
   3: { label: 'Expert', color: 'bg-green-400 text-green border-blue-300' }
 } as const;
 
