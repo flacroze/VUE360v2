@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import type { SkillsMatrixProps, RawSkillsMatrixRow, SkillsMatrixRowDG } from "../components/shared/schema";
+import type { SkillsMatrixProps, RawSkillsMatrixRow, SkillsMatrixRowDG } from "../../components/shared/schema";
 
 
 const SkillsMatrixTable: React.FC<SkillsMatrixProps> = ({ filters }) => {

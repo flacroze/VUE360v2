@@ -4,7 +4,7 @@ import FilterPanel from "../components/FilterPanel";
 import DateRangeFilter from "../components/plannings/date-range-filter";
 import PlanningsKPICards   from "../components/plannings/kpi-cards";
 import DailyHours from "../components/DailyTime";
-import DailyActivities from "../components/daily_activities_component";
+import DailyActivities from "../components/DailyActivities";
 import { useKPIData } from "../components/hooks/useKPIPlanning";
 
 export default function Planning() {

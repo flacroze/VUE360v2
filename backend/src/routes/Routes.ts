@@ -522,6 +522,84 @@ router.get('/skills/matrix', async (req: Request, res: Response) => {
   }
 );
 
+// Get skills by agent
+router.get('/skills/agent', async (req: Request, res: Response) => {
+  try {
+    const filters = {
+      siteId: req.query.siteId ? parseInt(req.query.siteId as string) : undefined,
+      contractType: req.query.contractType as string,
+      teamId: req.query.teamId ? parseInt(req.query.teamId as string) : undefined,
+      groupId: req.query.groupId ? parseInt(req.query.groupId as string) : undefined,
+      experienceId: req.query.experienceId ? parseInt(req.query.experienceId as string) : undefined,
+      contextId: req.query.contextId ? parseInt(req.query.contextId as string) : undefined,
+    };
+    
+    const cleanFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, value]) => value !== undefined && value !== null && (typeof value !== 'string' || value !== ''))
+    );
+
+    const params: any[] = [];
+    let agentfilters = " 1=1";
+
+    if (cleanFilters.siteId) {
+      agentfilters += ' AND u.siteId = ?';
+      params.push(cleanFilters.siteId);
+    }
+
+    if (cleanFilters.contractType) {
+      const natureValue = getContractCode(cleanFilters.contractType.toString());
+      if (natureValue !== undefined) {
+        agentfilters += ' AND ac.contractNature = ?';
+        params.push(natureValue);
+      }
+    }    
+    if (cleanFilters.teamId) {
+      agentfilters += ' AND au.teamId = ?';
+      params.push(cleanFilters.teamId);
+    }
+    if (cleanFilters.groupId) {
+      agentfilters += ' AND au.groupId = ?';
+      params.push(cleanFilters.groupId);
+    }
+    if (cleanFilters.experienceId) {
+      agentfilters += ' AND au.experienceId = ?';
+      params.push(cleanFilters.experienceId);
+    }
+    if (cleanFilters.contextId) {
+      agentfilters += ' AND au.contextId = ?';
+      params.push(cleanFilters.contextId);
+    }
+    //console.log("Agent Filters:", agentfilters, "Params:", params);  
+
+    // Construire la requête SQL
+    let query = `
+      SELECT u.lastName, u.firstName, a.name AS activityName, COALESCE(s.level,0) as level
+      FROM skill s
+      JOIN user u ON s.agentId = u.id
+      JOIN agentUser au ON s.agentId = au.id 
+      JOIN activity a ON s.activityId = a.id
+      JOIN agentContract ac ON s.agentId = ac.agentId
+      WHERE u.role = 1
+        AND u.id IN (
+        SELECT agentId
+        FROM agentContract
+        WHERE hireDate <= CURDATE() AND (departureDate IS NULL OR departureDate >= CURDATE())
+        )
+        AND ${agentfilters}
+    `;
+
+      // Fetch skills data from database
+      const [rows] = await pool.query<any[]>(query, params);
+
+      //console.log("Result:", rows);    
+      res.json(rows); // <-- on renvoie seulement les données
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Failed to fetch data',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
 //////////////////////////////////////////////////////////////////////////////////////
 // ROUTES POUR DIMENSIONNEMENT DES ACTIVITÉS
 //////////////////////////////////////////////////////////////////////////////////////

@@ -10,7 +10,8 @@ import {
   TableCell,
 } from "../components/ui/table";
 import { Badge } from "../components/ui/badge";
-import SkillsRepartChart from "../components/SkillsRepartHistogram";
+import SkillsRepartChart from "../components/skills/SkillsRepartHistogram";
+import AgentSkills from "../components/skills/SkillsAgent";
 
 /**
  * Type for chart repartition items
@@ -187,8 +188,11 @@ export default function Skills() {
           <SkillsRepartChart data={chartData} levels={skillsMatrix?.levels} />
         )}
       </div>
-
-
+      <AgentSkills 
+        filters={filters} 
+        onDataChange={(data) => console.log('Données compétences:', data)}
+      />
+      
     </>
   );
 }
