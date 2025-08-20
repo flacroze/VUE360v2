@@ -86,13 +86,13 @@ export default function Skills() {
   const getLevelBadgeClassName = (level: string) => {
     switch (level) {
       case "Aucun":
-        return "bg-red-50 text-red-700";
+        return "bg-gray-200 text-gray-700";
       case "En cours":
-        return "bg-yellow-50 text-yellow-700";
+        return "bg-yellow-200 text-yellow-700";
       case "Acquis":
-        return "bg-blue-50 text-blue-700";
+        return "bg-blue-200 text-blue-700";
       case "Expert":
-        return "bg-green-50 text-green-700";
+        return "bg-green-200 text-green-700";
       default:
         return "";
     }
@@ -192,7 +192,7 @@ export default function Skills() {
         filters={filters} 
         onDataChange={(data) => console.log('Données compétences:', data)}
       />
-      
+
     </>
   );
 }

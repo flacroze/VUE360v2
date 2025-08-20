@@ -16,10 +16,10 @@ type AgentSkillsProps = {
 
 // Configuration des niveaux
 const SKILL_LEVELS = {
-  0: { label: 'Aucun', color: 'bg-gray-100 text-gray-800 border-gray-300' },
-  1: { label: 'En cours', color: 'bg-yellow-100 text-yellow-800 border-yellow-300' },
-  2: { label: 'Acquis', color: 'bg-green-100 text-green-800 border-green-300' },
-  3: { label: 'Expert', color: 'bg-blue-100 text-blue-800 border-blue-300' }
+  0: { label: 'Aucun', color: 'bg-gray-400 text-grey border-gray-300' },
+  1: { label: 'En cours', color: 'bg-yellow-400 text-yellow border-yellow-300' },
+  2: { label: 'Acquis', color: 'bg-blue-400 text-blue border-green-300' },
+  3: { label: 'Expert', color: 'bg-green-400 text-green border-blue-300' }
 } as const;
 
 const AgentSkills: React.FC<AgentSkillsProps> = ({ filters, onDataChange }) => {
@@ -153,7 +153,7 @@ const AgentSkills: React.FC<AgentSkillsProps> = ({ filters, onDataChange }) => {
           <div className="flex items-center gap-2">
             <Award className="h-5 w-5 text-gray-600" />
             <h2 className="text-lg font-semibold text-gray-900">
-              Compétences des agents
+              Détail des compétences par agent
             </h2>
           </div>
           <div className="text-sm text-gray-600">
@@ -216,66 +216,9 @@ const AgentSkills: React.FC<AgentSkillsProps> = ({ filters, onDataChange }) => {
         </div>
       )}
 
-      {/* Liste des agents */}
-      <div className="p-6">
-        {filteredData.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">
-            <User className="h-8 w-8 mx-auto mb-2" />
-            <p>Aucun agent trouvé avec ces critères</p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {filteredData.map((agent, index) => (
-              <div key={`${agent.lastName}_${agent.firstName}_${index}`} 
-                   className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                {/* En-tête agent */}
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <User className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {agent.firstName} {agent.lastName}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        {agent.skills.length} compétence{agent.skills.length > 1 ? 's' : ''}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {/* Statistiques rapides */}
-                  <div className="flex gap-2 text-xs">
-                    {Object.entries(SKILL_LEVELS).map(([level, config]) => {
-                      const count = agent.skills.filter(s => s.level === parseInt(level)).length;
-                      return count > 0 ? (
-                        <span key={level} className={`px-2 py-1 rounded-full border ${config.color}`}>
-                          {count} {config.label.toLowerCase()}
-                        </span>
-                      ) : null;
-                    })}
-                  </div>
-                </div>
-
-                {/* Badges des compétences */}
-                <div className="flex flex-wrap gap-2">
-                  {agent.skills.map((skill, skillIndex) => (
-                    <SkillBadge 
-                      key={`${skill.activityName}_${skillIndex}`}
-                      skill={skill.activityName} 
-                      level={skill.level} 
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
       {/* Résumé */}
       {data.length > 0 && (
-        <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+        <div className="px-6 py-2 border-t border-gray-200">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
             {Object.entries(SKILL_LEVELS).map(([level, config]) => {
               const count = data.filter(item => item.level === parseInt(level)).length;
@@ -290,6 +233,66 @@ const AgentSkills: React.FC<AgentSkillsProps> = ({ filters, onDataChange }) => {
           </div>
         </div>
       )}
+
+      {/* Liste des agents */}
+      <div className="p-6">
+        {filteredData.length === 0 ? (
+          <div className="text-center text-gray-500 py-8">
+            <User className="h-8 w-8 mx-auto mb-2" />
+            <p>Aucun agent trouvé avec ces critères</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {filteredData.map((agent, index) => (
+              <div key={`${agent.lastName}_${agent.firstName}_${index}`} 
+                   className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                {/* Agent et compétences sur la même ligne */}
+                <div className="flex items-center gap-4">
+                  {/* Informations agent */}
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <User className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {agent.firstName} {agent.lastName}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {agent.skills.length} compétence{agent.skills.length > 1 ? 's' : ''}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Badges des compétences */}
+                  <div className="flex flex-wrap gap-2 flex-1 min-w-0">
+                    {agent.skills.map((skill, skillIndex) => (
+                      <SkillBadge 
+                        key={`${skill.activityName}_${skillIndex}`}
+                        skill={skill.activityName} 
+                        level={skill.level} 
+                      />
+                    ))}
+                  </div>
+
+                  {/* Statistiques rapides */}
+                  <div className="flex gap-2 text-xs flex-shrink-0">
+                    {Object.entries(SKILL_LEVELS).map(([level, config]) => {
+                      const count = agent.skills.filter(s => s.level === parseInt(level)).length;
+                      return count > 0 ? (
+                        <span key={level} className={`px-2 py-1 rounded-full border ${config.color}`}>
+                          {count}
+                        </span>
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      
     </div>
   );
 };
