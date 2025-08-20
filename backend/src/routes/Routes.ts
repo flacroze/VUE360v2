@@ -820,6 +820,7 @@ router.get('/planning/daily-breakdown', async (req: Request, res: Response) => {
         FROM agentAssignmentPublication aap
         JOIN agentContract ac ON ac.agentId = aap.agentId
         JOIN agentUser au ON au.id = aap.agentId
+        JOIN user u ON u.id = aap.agentId
         WHERE DATE(aap.start) BETWEEN ? AND ?
         AND ${agentfilters}
         GROUP BY DATE(aap.start)
@@ -831,6 +832,7 @@ router.get('/planning/daily-breakdown', async (req: Request, res: Response) => {
         FROM agentSchedulePublication asp
         JOIN agentContract ac ON ac.agentId = asp.agentId
         JOIN agentUser au ON au.id = asp.agentId
+        JOIN user u ON u.id = asp.agentId
         WHERE DATE(asp.date) BETWEEN ? AND ?
         AND ${agentfilters}
         GROUP BY DATE(asp.date)
@@ -1075,20 +1077,39 @@ router.get('/planning/kpi/agents/max', async (req: Request, res: Response) => {
 
     // Construire la requête SQL
     let query = `
-      SELECT COUNT(*) as totalAgents
+      WITH compte_activites AS (
+      SELECT COUNT(*) as agentsNombre
       FROM (
-        SELECT aap.agentId 
-        FROM agentAssignmentPublication aap
-        JOIN user u ON aap.agentId = u.id
-        JOIN agentUser au ON aap.agentId = au.id
-        JOIN agentContract ac ON aap.agentId = ac.agentId
-        WHERE aap.start >= ? and aap.end <= ? AND ${agentfilters}
-        GROUP BY aap.agentId
-        ) as agentIdListe
+      SELECT aap.agentId 
+      FROM agentAssignmentPublication aap
+      JOIN agentContract ac ON aap.agentId = ac.agentId
+      JOIN agentUser au ON aap.agentId = au.id
+      JOIN user u ON aap.agentId = u.id
+      WHERE aap.start >= ? AND aap.end <= ? AND ${agentfilters}
+      GROUP BY aap.agentId
+      ) as agentIdListe
+      ),
+      compte_horaires AS (
+      SELECT COUNT(*) as agentsNombre
+      FROM (
+      SELECT asp.agentId 
+      FROM agentSchedulePublication asp
+      JOIN agentContract ac ON asp.agentId = ac.agentId
+      JOIN agentUser au ON asp.agentId = au.id
+      JOIN user u ON asp.agentId = u.id
+      WHERE asp.date >= ? AND asp.date <= ? AND ${agentfilters}
+      GROUP BY asp.agentId
+      ) as agentIdListe
+      )
+      SELECT 
+        GREATEST(
+            (SELECT agentsNombre FROM compte_activites),
+            (SELECT agentsNombre FROM compte_horaires)
+        ) as totalAgents
     `;
 
     // Préparer les paramètres dans le bon ordre
-    const queryParams = Object.values(cleanFilters)
+    const queryParams = [startDate, endDate, ...params, startDate, endDate, ...params];
     //console.log("Parametres:", queryParams);
 
     // Fetch skills data from database
