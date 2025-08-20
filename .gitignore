@@ -1,0 +1,11 @@
+# Pour le backend
+/backend/.gitignore
+/backend/node_modules/
+/backend/.env
+/backend/dist/
+
+# Pour le frontend
+/frontend/.gitignore
+/frontend/node_modules/
+/frontend/build/
+/frontend/.env
