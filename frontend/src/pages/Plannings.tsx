@@ -6,6 +6,7 @@ import PlanningsKPICards   from "../components/plannings/kpi-cards";
 import DailyHours from "../components/DailyTime";
 import DailyActivities from "../components/DailyActivities";
 import { useKPIData } from "../components/hooks/useKPIPlanning";
+import AgentOccupancyChart from "../components/plannings/agent-occupancy-chart";
 
 export default function Planning() {
   const { filters, updateFilter, clearFilters } = useFilters();
@@ -66,6 +67,15 @@ export default function Planning() {
         <DailyActivities filters={filters} />
       </div>
     </div>
+
+    <div>
+      <AgentOccupancyChart
+        filters={filters}
+        className="my-4"
+        height="600px" // Optionnel pour définir la hauteur du graphique
+      />
+    </div>
+
     </>
   );
 }

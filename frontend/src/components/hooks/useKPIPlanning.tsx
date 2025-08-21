@@ -32,7 +32,7 @@ export function useKPIData({ filters }: useKPIDataProps){
         if (filters.contextId) params.append('contextId', filters.contextId.toString());
         if (filters.startDate) params.append('startDate', filters.startDate);
         if (filters.endDate) params.append('endDate', filters.endDate);
-        console.log('Original filters for KPI :', filters);
+        //console.log('Original filters for KPI :', filters);
 
         // Effectuer les quatre appels API en parallèle
         const url = `/api/planning/kpi/agents/max?${params.toString()}`;
@@ -58,7 +58,7 @@ export function useKPIData({ filters }: useKPIDataProps){
           "totalTeams": teamsResult[0]?.totalTeams || 0,
           "totalActivities": activitiesResult[0]?.totalActivities || 0,
         };
-        console.log("KPI Data fetched successfully:", combinedData);
+        //console.log("KPI Data fetched successfully:", combinedData);
 
         // Envelopper dans un tableau comme demandé
         setData([combinedData]);

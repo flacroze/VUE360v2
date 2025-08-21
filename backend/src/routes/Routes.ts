@@ -1014,6 +1014,113 @@ router.get("/planning/activity/repartition", async (req: Request, res: Response)
   }
 });
 
+// Route pour le calcul de l'occupation des agents
+// Cette route retourne l'occupation des agents pour une période donnée
+router.get("/planning/agent/occupancy", async (req: Request, res: Response) => {
+  try {
+    const filters = {
+      startDate: req.query.startDate as string | undefined,
+      endDate: req.query.endDate as string | undefined,siteId: req.query.siteId ? parseInt(req.query.siteId as string) : undefined,
+      contractType: req.query.contractType as string,
+      teamId: req.query.teamId ? parseInt(req.query.teamId as string) : undefined,
+      groupId: req.query.groupId ? parseInt(req.query.groupId as string) : undefined,
+      experienceId: req.query.experienceId ? parseInt(req.query.experienceId as string) : undefined,
+      contextId: req.query.contextId ? parseInt(req.query.contextId as string) : undefined,
+    };
+    
+    // Validation des dates
+    const startDate = filters.startDate && isValidDate(filters.startDate) ? filters.startDate : '2025-07-07';
+    const endDate = filters.endDate && isValidDate(filters.endDate) ? filters.endDate : '2025-07-13';
+    //console.log("Dates utilisées:", startDate, endDate);
+
+    const cleanFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, value]) => value !== undefined && value !== null && (typeof value !== 'string' || value !== ''))
+    );
+
+    if (new Date(endDate) < new Date(startDate)) {
+        throw new Error('End date cannot be before start date');
+    }
+
+    const params: any[] = [];
+    let agentfilters = "1=1";
+
+    if (cleanFilters.siteId) {
+      agentfilters += ' AND u.siteId = ?';
+      params.push(cleanFilters.siteId);
+    }
+
+    if (cleanFilters.contractType) {
+      const natureValue = getContractCode(cleanFilters.contractType.toString());
+      if (natureValue !== undefined) {
+        agentfilters += ' AND ac.contractNature = ?';
+        params.push(natureValue.toString());
+      }
+    }    
+    if (cleanFilters.teamId) {
+      agentfilters += ' AND au.teamId = ?';
+      params.push(cleanFilters.teamId);
+    }
+    if (cleanFilters.groupId) {
+      agentfilters += ' AND au.groupId = ?';
+      params.push(cleanFilters.groupId);
+    }
+    if (cleanFilters.experienceId) {
+      agentfilters += ' AND au.experienceId = ?';
+      params.push(cleanFilters.experienceId);
+    }
+    if (cleanFilters.contextId) {
+      agentfilters += ' AND au.contextId = ?';
+      params.push(cleanFilters.contextId);
+    }
+    
+    let query =
+      `
+      SELECT 
+          COALESCE(a1.agentId, a2.agentId) AS agentId,
+          a1.lastName,
+          a1.firstName,
+          COALESCE(a2.planned, 0) AS planned,
+          COALESCE(a1.assigned, 0) AS assigned
+      FROM (
+          SELECT 
+              aap.agentId AS agentId,
+              u.lastName AS lastName,
+              u.firstName AS firstName,
+              SUM(TIME_TO_SEC(TIMEDIFF(aap.end, aap.start)) / 3600.0) AS assigned
+          FROM agentAssignmentPublication aap
+          JOIN user u ON u.id = aap.agentId
+          JOIN agentUser au ON au.id  = aap.agentId 
+          JOIN agentContract ac ON ac.agentId = aap.agentId 
+          WHERE aap.start >= ? AND aap.start <= ? AND ${agentfilters}
+          GROUP BY aap.agentId
+      ) a1
+      LEFT JOIN (
+          SELECT 
+              asp.agentId AS agentId,
+              SUM((asp.end - asp.start) / 3600.0) AS planned
+          FROM agentSchedulePublication asp
+          JOIN user u ON u.id = asp.agentId
+          JOIN agentUser au ON au.id  = asp.agentId 
+          JOIN agentContract ac ON ac.agentId = asp.agentId     
+          WHERE asp.date >= ? AND asp.date <= ? AND ${agentfilters}
+          GROUP BY asp.agentId
+      ) a2 ON a1.agentId = a2.agentId;
+      `
+      // Préparer les paramètres dans le bon ordre
+      const queryParams = [ startDate, endDate, ...params, startDate, endDate, ...params ];
+      console.log("Filters for agents occupancy:", queryParams);
+      const [rows] = await pool.query<any[]>(query, queryParams);
+
+      res.json(rows); // <-- on renvoie seulement les données
+      //console.log("Activities repartition data:", rows);
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Failed to fetch activities repartition',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 // Route pour le nombre maximum d'agents planifiés
 // Cette route retourne le nombre maximum d'agents planifiés pour une période donnée
 router.get('/planning/kpi/agents/max', async (req: Request, res: Response) => {
