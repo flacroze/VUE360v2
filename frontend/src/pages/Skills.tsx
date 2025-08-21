@@ -190,7 +190,6 @@ export default function Skills() {
       </div>
       <AgentSkills 
         filters={filters} 
-        onDataChange={(data) => console.log('Données compétences:', data)}
       />
 
     </>

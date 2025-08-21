@@ -40,7 +40,7 @@ const AgentSkills: React.FC<AgentSkillsProps> = ({ filters, onDataChange }) => {
           }
         });
 
-        console.log('Fetching skills with URL:', `/api/skills/agent?${params.toString()}`);
+        //console.log('Fetching skills with URL:', `/api/skills/agent?${params.toString()}`);
 
         const response = await fetch(`/api/skills/agent?${params.toString()}`);
 
@@ -51,7 +51,7 @@ const AgentSkills: React.FC<AgentSkillsProps> = ({ filters, onDataChange }) => {
         }
 
         const responseData: AgentSkillData[] = await response.json();
-        console.log('Received skills data:', responseData);
+        //console.log('Received skills data:', responseData);
         setData(responseData);
         onDataChange?.(responseData);
       } catch (err: any) {
