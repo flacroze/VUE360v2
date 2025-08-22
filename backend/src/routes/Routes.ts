@@ -181,14 +181,14 @@ router.get('/agents', async (req: Request, res: Response) => {
       params.push(cleanFilters.contextId);
     }  
 
-    if (cleanFilters.activityId) {
-      query += ' AND ac.activityId = ?';
-      params.push(cleanFilters.activityId);
-    }
-    if (cleanFilters.skillLevel) {
-      query += ' AND ac.skillLevel = ?';
-      params.push(cleanFilters.skillLevel);
-    }
+    // if (cleanFilters.activityId) {
+    //   query += ' AND ac.activityId = ?';
+    //   params.push(cleanFilters.activityId);
+    // }
+    // if (cleanFilters.skillLevel) {
+    //   query += ' AND ac.skillLevel = ?';
+    //   params.push(cleanFilters.skillLevel);
+    // }
 
 
     const [rows] = await pool.query<Agent[]>(query, params);
@@ -843,14 +843,14 @@ router.get('/planning/daily-breakdown', async (req: Request, res: Response) => {
       `
     // Préparer les paramètres dans le bon ordre
     const queryParams = params.concat(params);
-    console.log('Executing query:', query);
-    console.log('Query params:', queryParams);
+    //console.log('Executing query:', query);
+    //console.log('Query params:', queryParams);
     
       // Exécuter la requête
       const [results] = await pool.query<any[]>(query, queryParams);
       const queryResults = results as any[];
 
-      console.log('Query results:', queryResults);
+      //console.log('Query results:', queryResults);
 
     // dates valables pour la période demandée
     const allDates = queryResults.map(item => item.date_formatted);
@@ -1029,7 +1029,7 @@ router.get("/planning/agent/occupancy", async (req: Request, res: Response) => {
       contextId: req.query.contextId ? parseInt(req.query.contextId as string) : undefined,
       activityId: req.query.activityId ? parseInt(req.query.activityId as string) : undefined,
     };
-    console.log("Received filters for agents occupancy:", filters);
+    //console.log("Received filters for agents occupancy:", filters);
     
     // Validation des dates
     const startDate = filters.startDate && isValidDate(filters.startDate) ? filters.startDate : '2025-07-07';
@@ -1118,7 +1118,7 @@ router.get("/planning/agent/occupancy", async (req: Request, res: Response) => {
       `
       // Préparer les paramètres dans le bon ordre
       const queryParams = [ startDate, endDate, ...params, startDate, endDate, ...params ];
-      console.log("Filters for agents occupancy:", queryParams);
+      //console.log("Filters for agents occupancy:", queryParams);
       const [rows] = await pool.query<any[]>(query, queryParams);
 
       res.json(rows); // <-- on renvoie seulement les données

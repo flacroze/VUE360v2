@@ -40,7 +40,7 @@ export default function Equity() {
       <header className="bg-white shadow-sm border-b border-gray-200 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Equity - Taux d'occupation</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Analyse de l'équité</h2>
             <p className="text-gray-600 mt-1">Analyse des taux d'occupation des agents par activité</p>
           </div>
         </div>

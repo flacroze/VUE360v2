@@ -43,7 +43,7 @@ if (error) console.error('Health check error:', error);
       {/* Logo */}
       <div className="p-6 border-b border-gray-200">
         <h1 className="text-2xl font-bold text-primary">VUE 360°</h1>
-        <p className="text-sm text-gray-600 mt-1">Plannings+</p>
+        <p className="text-sm text-gray-600 mt-1">PLANNINGS+</p>
       </div>
 
       {/* Navigation */}
