@@ -51,24 +51,6 @@ export default function Planning() {
     </div>
 
     <div>
-        <PlanningsKPICards
-            filters={filters}
-            data={data}
-            // isLoading={!data} // Utiliser une condition pour le chargement
-            isLoading={true}
-        />
-    </div>
-    
-    <div className= "flex gap-6">
-      <div className="flex-1">
-        <DailyHours filters={filters} />
-      </div>
-      <div className="flex-1">      
-        <DailyActivities filters={filters} />
-      </div>
-    </div>
-
-    <div>
       <AgentOccupancyChart
         filters={filters}
         className="my-4"

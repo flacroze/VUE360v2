@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ChartPie, Users, Calendar, BarChart3, Database, FileText} from "lucide-react";
+import { ChartPie, Users, Calendar, BarChart3, Database, FileText, MapPin} from "lucide-react";
 //import { ChartPie, Users, Calendar, BarChart3, FileText, MapPin, Download, Database} from "lucide-react";
 import { cn } from "../../lib/utils";
 
@@ -17,6 +17,7 @@ const navigation: NavigationItem[] = [
   { name: "Compétences", href: "/skills", icon: BarChart3, section: "ANALYSES" },
   { name: "Dimensionnements", href: "/dimensionnements", icon: ChartPie, section: "ANALYSES" },
   { name: "Plannings", href: "/plannings", icon: FileText, section: "ANALYSES" },
+  { name: "Equité", href: "/equity", icon: MapPin, section: "ANALYSES" },
 ];
 
 const sections = ["PRINCIPAL", "ANALYSES"];
