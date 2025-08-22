@@ -10,7 +10,9 @@ const routeToSection: Record<string, string> = {
   "/accueil": "ANALYSES", 
   "/agents": "ANALYSES",
   "/skills": "ANALYSES",
-  "/planning": "ANALYSES"
+  "/planning": "ANALYSES",
+  "/equity": "ANALYSES",
+  "/dimensionnements": "ANALYSES",
   // Ajouter d'autres routes si nécessaire
 };
 

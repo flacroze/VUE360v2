@@ -1,7 +1,7 @@
+import { useEffect } from "react";
 import { useFilters } from "../components/hooks/useFilters";
-
 import FilterPanel from "../components/FilterPanel";
-import DateRangeFilter from "../components/plannings/date-range-filter";
+import DateRangeFilter from "../components/plannings/FilterDate";
 import PlanningsKPICards   from "../components/plannings/kpi-cards";
 import DailyHours from "../components/DailyTime";
 import DailyActivities from "../components/DailyActivities";
@@ -15,7 +15,16 @@ export default function Planning() {
     updateFilter('startDate', undefined);
     updateFilter('endDate', undefined);
   };
-  
+
+  const clearActivityFilter = () => {
+    updateFilter('activityId', undefined);
+  };
+
+  // Exécuter clearActivityFilter au chargement de la page
+  useEffect(() => {
+    clearActivityFilter();
+  }, []); // Le tableau vide [] signifie que l'effet s'exécute une seule fois au montage
+
   const { data } = useKPIData( { filters });
     //console.log("KPI Data:", data, "Loading:", isLoading);
   
@@ -39,7 +48,7 @@ export default function Planning() {
         <FilterPanel
             filters={filters}
             onUpdateFilter={updateFilter}
-            onClearFilters={clearFilters}
+            onClearFilters={clearFilters }
         />   
     </div>
     <div>

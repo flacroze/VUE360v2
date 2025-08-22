@@ -9,6 +9,7 @@ import {getContractCode } from '../utils/utils';
 interface Activity extends RowDataPacket { 
   id: number;
   name: string;
+  enabled?: number;
   date_: string;
   jour: string;
   heure: string;
@@ -277,7 +278,7 @@ router.get("/contexts", async (req, res) => {
 router.get("/activities", async (req, res) => {
   try {
     const [rows] = await pool.query<Activity[]>(
-      `SELECT id, name FROM activity ORDER BY name WHERE enabled = 1`
+      `SELECT id, name FROM activity WHERE enabled = 1 ORDER BY name`
     );
     res.json(rows); // <-- on renvoie seulement les données
   } catch (error) {
@@ -1026,7 +1027,9 @@ router.get("/planning/agent/occupancy", async (req: Request, res: Response) => {
       groupId: req.query.groupId ? parseInt(req.query.groupId as string) : undefined,
       experienceId: req.query.experienceId ? parseInt(req.query.experienceId as string) : undefined,
       contextId: req.query.contextId ? parseInt(req.query.contextId as string) : undefined,
+      activityId: req.query.activityId ? parseInt(req.query.activityId as string) : undefined,
     };
+    console.log("Received filters for agents occupancy:", filters);
     
     // Validation des dates
     const startDate = filters.startDate && isValidDate(filters.startDate) ? filters.startDate : '2025-07-07';
@@ -1042,37 +1045,43 @@ router.get("/planning/agent/occupancy", async (req: Request, res: Response) => {
     }
 
     const params: any[] = [];
-    let agentfilters = "1=1";
+    let query1 = "1=1";
 
     if (cleanFilters.siteId) {
-      agentfilters += ' AND u.siteId = ?';
+      query1 += ' AND u.siteId = ?';
       params.push(cleanFilters.siteId);
     }
 
     if (cleanFilters.contractType) {
       const natureValue = getContractCode(cleanFilters.contractType.toString());
       if (natureValue !== undefined) {
-        agentfilters += ' AND ac.contractNature = ?';
+        query1 += ' AND ac.contractNature = ?';
         params.push(natureValue.toString());
       }
     }    
     if (cleanFilters.teamId) {
-      agentfilters += ' AND au.teamId = ?';
+      query1 += ' AND au.teamId = ?';
       params.push(cleanFilters.teamId);
     }
     if (cleanFilters.groupId) {
-      agentfilters += ' AND au.groupId = ?';
+      query1 += ' AND au.groupId = ?';
       params.push(cleanFilters.groupId);
     }
     if (cleanFilters.experienceId) {
-      agentfilters += ' AND au.experienceId = ?';
+      query1 += ' AND au.experienceId = ?';
       params.push(cleanFilters.experienceId);
     }
     if (cleanFilters.contextId) {
-      agentfilters += ' AND au.contextId = ?';
+      query1 += ' AND au.contextId = ?';
       params.push(cleanFilters.contextId);
     }
+    let query2 = query1; // filtre pour la deuxième sous-requête sans activityId
     
+    if (cleanFilters.activityId) {
+      query1 += ' AND a.id = ?';
+      params.push(cleanFilters.activityId);
+    }
+
     let query =
       `
       SELECT 
@@ -1090,8 +1099,9 @@ router.get("/planning/agent/occupancy", async (req: Request, res: Response) => {
           FROM agentAssignmentPublication aap
           JOIN user u ON u.id = aap.agentId
           JOIN agentUser au ON au.id  = aap.agentId 
-          JOIN agentContract ac ON ac.agentId = aap.agentId 
-          WHERE aap.start >= ? AND aap.start <= ? AND ${agentfilters}
+          JOIN agentContract ac ON ac.agentId = aap.agentId
+          JOIN activity a ON a.id = aap.activityId 
+          WHERE aap.start >= ? AND aap.start <= ? AND ${query1}
           GROUP BY aap.agentId
       ) a1
       LEFT JOIN (
@@ -1101,8 +1111,8 @@ router.get("/planning/agent/occupancy", async (req: Request, res: Response) => {
           FROM agentSchedulePublication asp
           JOIN user u ON u.id = asp.agentId
           JOIN agentUser au ON au.id  = asp.agentId 
-          JOIN agentContract ac ON ac.agentId = asp.agentId     
-          WHERE asp.date >= ? AND asp.date <= ? AND ${agentfilters}
+          JOIN agentContract ac ON ac.agentId = asp.agentId  
+          WHERE asp.date >= ? AND asp.date <= ? AND ${query2}
           GROUP BY asp.agentId
       ) a2 ON a1.agentId = a2.agentId;
       `

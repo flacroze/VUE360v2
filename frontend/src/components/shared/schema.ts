@@ -105,7 +105,6 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type Site = typeof sites.$inferSelect;
 export type InsertSite = z.infer<typeof insertSiteSchema>;
-export type Activity = typeof activities.$inferSelect;
 export type InsertActivity = z.infer<typeof insertActivitySchema>;
 export type AgentContract = typeof agentContracts.$inferSelect;
 export type InsertAgentContract = z.infer<typeof insertAgentContractSchema>;
@@ -186,8 +185,8 @@ export type FilterOptions = {
   activityId?: number;
   skillLevel?: number;
   startDate?: string;
-  endDate?: string   
-};
+  endDate?: string;
+  };
 
 export interface SkillsMatrix {
   activities?: { id: number; name: string }[]; // optionnel, si utilisé ailleurs
@@ -343,3 +342,13 @@ export interface ActivityRepartition {
   date: string;
   duration: number;
 };
+
+export interface Activity {
+  id: number;
+  name: string;
+  code?: string;
+  enabled?: boolean;
+  activityFamilyId?: number;
+  activityNatureId?: number;
+  description?: string;
+}
