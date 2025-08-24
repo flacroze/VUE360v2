@@ -89,7 +89,7 @@ export default function Equity() {
           <AgentOccupancyChart
             filters={filters}
             className="w-full"
-            height="h-[800px]"
+            height="600px"
           />
         </div>
 

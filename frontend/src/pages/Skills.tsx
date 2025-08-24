@@ -1,14 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import FilterPanel from "../components/FilterPanel";
 import { useFilters } from "../components/hooks/useFilters";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "../components/ui/table";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../components/ui/table";
 import { Badge } from "../components/ui/badge";
 import SkillsRepartChart from "../components/skills/SkillsRepartHistogram";
 import AgentSkills from "../components/skills/SkillsAgent";

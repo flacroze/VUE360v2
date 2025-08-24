@@ -74,6 +74,8 @@ export function useKPIData({ filters }: useKPIDataProps){
 
     fetchKPIData();
   }, [filters]);
+  // les données KPI dépendent des filtres. Si l’utilisateur change un filtre (par exemple, sélectionne un autre siteId
+  //  dans l’interface), le hook doit relancer les appels API pour refléter les nouvelles données filtrées.
 
   return { data, isLoading };
 }

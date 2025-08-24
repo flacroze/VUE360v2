@@ -23,7 +23,7 @@ export default function Planning() {
   // Exécuter clearActivityFilter au chargement de la page
   useEffect(() => {
     clearActivityFilter();
-  }, []); // Le tableau vide [] signifie que l'effet s'exécute une seule fois au montage
+  },[]); // Le tableau vide [] signifie que l'effet s'exécute une seule fois au montage
 
   const { data } = useKPIData( { filters });
     //console.log("KPI Data:", data, "Loading:", isLoading);

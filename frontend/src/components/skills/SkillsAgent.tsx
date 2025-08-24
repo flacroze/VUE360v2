@@ -13,6 +13,8 @@ type AgentSkillsProps = {
   filters: any;
   onDataChange?: (data: AgentSkillData[]) => void;
 };
+// onDataChange: Une fonction de rappel optionnelle (grâce à ?) qui prend un tableau de AgentSkillData en argument
+// et ne retourne rien (void). Elle permet au composant parent d’être notifié lorsque les données changent.
 
 // Configuration des niveaux
 const SKILL_LEVELS = {

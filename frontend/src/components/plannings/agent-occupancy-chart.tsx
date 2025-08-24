@@ -52,8 +52,10 @@ export default function AgentOccupancyChart ({ filters , onDataChange, className
           displayName: `${agent.firstName} ${agent.lastName}`
         }));
 
-        setData(processedData);
-        onDataChange?.(processedData);
+        const sortedAgents = processedData.sort((a, b) => a.occupancy - b.occupancy);
+
+        setData(sortedAgents);
+        onDataChange?.(sortedAgents);
       } catch (err: any) {
         setError(err.message);
         setData([]);
@@ -65,7 +67,7 @@ export default function AgentOccupancyChart ({ filters , onDataChange, className
     fetchData();
   }, [filters, onDataChange]);
 
-  // Fonction pour obtenir la couleur en fonction du taux d'occupation
+   // Fonction pour obtenir la couleur en fonction du taux d'occupation
   const getBarColor = (occupancy: number): string => {
     if (occupancy >= 80) return '#ef4444'; // Rouge - surcharge
     if (occupancy >= 70) return '#f97316'; // Orange - proche de la limite
@@ -173,7 +175,8 @@ export default function AgentOccupancyChart ({ filters , onDataChange, className
             />
             <YAxis 
               label={{ value: 'Taux d\'occupation (%)', angle: -90, position: 'insideLeft' }}
-              domain={[0, 100]}
+              //domain={[0, maxOccupancy]}
+              type="number"  //Laisser Recharts ajuster automatiquement           
             />
             <Tooltip content={<CustomTooltip />} />
             <Bar dataKey="occupancy" radius={[2, 2, 0, 0]}>
