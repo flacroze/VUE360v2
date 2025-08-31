@@ -1,0 +1,13 @@
+.date-picker {
+  margin-right: 20px;
+}
+
+.custom-selector {
+  font-size: 1.2rem; /* Taille de police plus grande (ajustez selon vos besoins) */
+  font-weight: bold; /* Texte en gras */
+  padding: 8px; /* Ajoute un peu de padding pour un meilleur rendu */
+  border: 1px solid #ccc; /* Optionnel : bordure pour harmoniser */
+  border-radius: 4px; /* Optionnel : coins arrondis */
+  width: 200px; /* Optionnel : largeur fixe pour uniformité */
+  margin-right: 40px; /* Espace entre le sélecteur et le bouton */
+}

@@ -1,0 +1,22 @@
+{
+  "name": "mon-projet-vue360",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "start:frontend": "npm run start --workspace=frontend",
+    "start:backend": "npm run start --workspace=backend",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\""
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.8",
+    "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "craco": "^0.0.3"
+  }
+}
